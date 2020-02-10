@@ -1,0 +1,21 @@
+today's vedio list:
+
+1.《Fast & Furious》---------------------------video ID:1569494984
+
+2.《Captain America：The First Avenger》-------video ID:9575722424
+
+3.《X-Men Origins: Wolverine》-----------------video ID:1471728585
+
+4.《Iron Man》---------------------------------video ID:2728585858
+
+5.《Marvel's The Avengers》--------------------video ID:1728727587
+
+use ways: 
+
+1.choose the video you like.
+2.append it to the URL that i give to you and swap the <filename> and video ID.
+
+like this:
+
+rtsp://x.x.x.x:port/<filename>    --->     rtsp://x.x.x.x:port/1728727587.ts
+
