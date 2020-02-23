@@ -3,7 +3,7 @@
 #include <signal.h>
 
 sqlite3 *db;
-
+//处理SIGPIPE信号，当发消息给客户fd，但客户fd已经关闭了
 void handler(int signo)
 {
     cout<<"Get a signal :SIGPIPE !"<<endl;
@@ -52,7 +52,7 @@ int main(int argc, char const *argv[])
     }else {
         cout<<"Open database successfully!."<<endl;
     }
-
+    //创建用户信息表
     string operation = "create table user_1(name varchar(10) PRIMARY KEY,password varchar(128),phone_number varchar(11))"; 
     error_remind = sqlite3_exec(db,operation.c_str(),0,0,&Error_Message);
     if(error_remind != SQLITE_OK){
@@ -60,7 +60,7 @@ int main(int argc, char const *argv[])
     }else {
         cout<<"Create data table successfully."<<endl;
     }
-
+    //创建日志表
     string operation2 = "create table log(content varchar(256),logtime TIMESTAMP default (datetime('now','localtime')))";
     error_remind = sqlite3_exec(db,operation2.c_str(),0,0,&Error_Message);
 
@@ -70,7 +70,7 @@ int main(int argc, char const *argv[])
     }else {
         cout<<"Create log table successfully."<<endl;
     }
-
+    //启动服务器
     EpollServer *epoll = new EpollServer(port, threadnum);
     cout<<"threr is the thread_id that has been created:\n";
     epoll->init();

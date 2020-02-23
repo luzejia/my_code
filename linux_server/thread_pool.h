@@ -18,10 +18,12 @@
 #define MAX_EVENT_NUMBER 1024
 #define TIMESLOT 10 
 using namespace std;
+//外部变量声明
 extern time_heap client_time_heap;
 extern client_data *users;
-extern atomic_int new_increace[1024];
+extern atomic_int new_increace[1024];    //原子变量数组
 
+//线程池类
 template<class T>
 class threadpool
 {
@@ -138,7 +140,7 @@ void threadpool<T>::start()
         throw std::exception();
     }
 }
-
+//任务添加汉书
 template <class T>
 bool threadpool<T>::append_task(T *task)  
 {   
@@ -155,7 +157,7 @@ bool threadpool<T>::append_task(T *task)
     }
     return true;
 }
-
+//线程池工作线程工作函数
 template <class T>
 void *threadpool<T>::worker(void *arg)
 {
@@ -163,7 +165,7 @@ void *threadpool<T>::worker(void *arg)
     pool->run(((thread_worker_parameter*)arg)->index);
     return pool;
 }
-
+//线程池管理线程工作函数
 template <class T>
 void *threadpool<T>::admin(void *arg)
 {
@@ -171,7 +173,7 @@ void *threadpool<T>::admin(void *arg)
     pool->control();
     return pool;
 }
-
+//心跳函数
 template <class T>
 void *threadpool<T>::keepalive(void *arg)
 {
@@ -179,7 +181,7 @@ void *threadpool<T>::keepalive(void *arg)
     pool->control2();
     return pool;
 }
-
+//从任务队列取任务函数
 template <class T>
 T* threadpool<T>::getTask()
 {
@@ -238,6 +240,7 @@ void threadpool<T>::control()
             }  
         }
         write(1,p,11);
+        //以下为线程池线程调度函数
         if ((((float)(busy_thread) / current_thread_num) >= 0.80) && (current_thread_num == 10.0))
         {
             char p[11];

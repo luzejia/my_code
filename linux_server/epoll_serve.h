@@ -37,12 +37,13 @@
 #define D 0x10325476
 
 
-extern sqlite3 * db;
-time_heap client_time_heap(1024);
+extern sqlite3 * db;    //数据库句柄
+time_heap client_time_heap(1024);    //创建最小堆
 using namespace std;
-atomic_int new_increace[1024];
+atomic_int new_increace[1024];    //标记连接的数组，默认1024
+client_data *users = new client_data[FD_LIMIT];    //客户最小堆信息数组
 
-client_data *users = new client_data[FD_LIMIT];
+//以下为MD5加密算法
 unsigned int strlength;
 unsigned int atemp;
 unsigned int btemp;
@@ -165,13 +166,13 @@ string getMD5(string source)
     return changeHex(atemp).append(changeHex(btemp)).append(changeHex(ctemp)).append(changeHex(dtemp));
 }
 
-
+//任务队列信息对象
 class BaseTask
 {
     public:
-        virtual void doit() = 0;
+        virtual void doit() = 0;//提供一个待实现的接口
 };
-
+//任务队列信息对象
 class Task : public BaseTask
 {
     private:
@@ -195,7 +196,7 @@ class Task : public BaseTask
             return 0;
 
         }
-        void doit()
+        void doit()    //任务结构体的处理函数，内置在任务结构体，以供回调
         {
             int count = 0;
             char buffer[MAX_BUFFER];
@@ -249,7 +250,7 @@ class Task : public BaseTask
             memset(temp, '\0', 200);
             write(1,buffer, MAX_BUFFER - 1);   
 
-            if(buffer[0] == '1')
+            if(buffer[0] == '1')    //buffer[0]为报文种类，根据不同种类进行不同业务逻辑
             {
                 int error_remind;
                 char *Error_Message;  
@@ -358,7 +359,7 @@ class Task : public BaseTask
         }
 
 };
-
+//Epoll类
 class EpollServer
 {
     private:
@@ -385,7 +386,7 @@ class EpollServer
 
         void epoll();
 
-        static int setnonblocking(int fd)
+        static int setnonblocking(int fd)   //设置非阻塞
         {
             int old_option = fcntl(fd, F_GETFL);
             int new_option = old_option | O_NONBLOCK;
@@ -400,7 +401,7 @@ class EpollServer
             event.events = EPOLLIN | EPOLLET;
             if(oneshot)
             {
-                event.events |= EPOLLONESHOT;
+                event.events |= EPOLLONESHOT;  //为需要添加oneshot属性的添加，oneshot防止多线程操作同一个fd，造成缓冲区混乱
             }
             epoll_ctl(epollfd, EPOLL_CTL_ADD, sockfd, &event);
             EpollServer::setnonblocking(sockfd);
@@ -444,7 +445,7 @@ void EpollServer::init()   //EpollServer的初始化
     pool = new threadpool<BaseTask>(threadnum);  //创建线程池
 }
 
-
+//最小堆处理超时连接时的回调汉书
 void cb_func2(client_data *user_data)
 {
     epoll_ctl(user_data->epollfd, EPOLL_CTL_DEL, user_data->sockfd, 0);
