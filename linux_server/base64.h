@@ -18,6 +18,7 @@ inline int Base64Decode(char * buf, const char * base64code, int src_len = 0);
 
 __inline char GetB64Char(int index)
 {
+    //编码表
     const char szBase64Table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     if (index >= 0 && index < 64) {
         return szBase64Table[index];
@@ -51,7 +52,7 @@ inline int Base64Encode(char * base64code, const char * src, int src_len)
         psrc += 3;
     }
 
-// 处理最后余下的不足3字节的饿数据
+// 处理最后余下的不足3字节的数据
     if (i < src_len)
     {
         int rest = src_len - i;
