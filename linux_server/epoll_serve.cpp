@@ -53,7 +53,7 @@ int main(int argc, char const *argv[])
         cout<<"Open database successfully!."<<endl;
     }
     //创建用户信息表
-    string operation = "create table user_1(name varchar(10) PRIMARY KEY,password varchar(128),phone_number varchar(11))"; 
+    string operation = "create table user_1(name varchar(10) ,password varchar(128),phone_number varchar(11) PRIMARY KEY)"; 
     error_remind = sqlite3_exec(db,operation.c_str(),0,0,&Error_Message);
     if(error_remind != SQLITE_OK){
         cout<<"table is ready."<<endl;
